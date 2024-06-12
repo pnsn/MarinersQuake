@@ -17,7 +17,7 @@ station = "KDK"
 location = "--"
 channel = "HNN"
 
-# Define start and end times using Python's datetime in UTC
+# Define start and end times using local times 
 plot_start_time = datetime(2024, 6, 10, 21, 20, 0).astimezone(pytz.utc)
 plot_end_time = datetime(2024, 6, 10, 21, 22, 0).astimezone(pytz.utc)
 padding = 5 / 0.005  # Calculate padding based on the lowest corner of the response removal filter
@@ -29,12 +29,12 @@ data_end_time = plot_end_time + timedelta(seconds=padding)
 # Define frequency bands for the response removal
 pre_filt = (0.005, 0.006, 30.0, 35.0)
 
-# Set filter parameters
+# Set filter parameters. Make sure these are in between the 2nd and 3rd in pre_filt.
 filter_type = 'bandpass'
 freqmin = 10.
 freqmax = 15.
 
-# Define colors and linewidth
+# Define colors and linewidth.  Just look up RGB values for team colors
 trace_color = normalize_rgb(12,44,86)
 text_color = normalize_rgb(0,92,92)
 trace_linewidth = 0.2
@@ -42,7 +42,15 @@ trace_linewidth = 0.2
 # Define the ground motion type, options are: DISP, VEL, ACC, DEF
 ground_motion_type = "ACC"
 ground_motion_label = {}
-ground_motion_label['DISP'] = 'displacement'
+if ground_motion_type == "ACC":
+    ground_motion_label = "Acceleration"
+    ground_motion_units = "(m/s^2)"
+elif ground_motion_type == "VEL":
+    ground_motion_label = "Velocity"
+    ground_motion_units = "(m/s)"
+elif ground_motion_type == "DISP":
+    ground_motion_label = "Displacement"
+    ground_motion_units = "(m)"
 
 # Initialize client to access data from the IRIS data service
 client = Client("IRIS")
@@ -75,7 +83,6 @@ try:
     # Adjust times to Pacific Time dynamically considering daylight savings
     fudged_local_times = [t + timedelta(hours=offset) for t in times]
     fudged_plot_start_time = plot_start_time + timedelta(hours=offset)
-    print(offset, times[0], fudged_local_times[0])
 
     # Create a figure for plotting
     fig, ax = plt.subplots(figsize=(10, 6))
@@ -84,7 +91,7 @@ try:
     # Set title and labels
     ax.set_title(f'Seismogram from PNSN station {station} (North-South motion) {fudged_plot_start_time.strftime("%Y-%m-%d")}', color=text_color, fontsize=12)
     ax.set_xlabel('Time (Pacific Time)', color=text_color)
-    ax.set_ylabel('Acceleration (m/s^2)', color=text_color)
+    ax.set_ylabel(ground_motion_label + " " + ground_motion_units, color=text_color)
 
     # Change axis and tick colors
     ax.tick_params(axis='both', which='both', colors=text_color)
@@ -99,12 +106,9 @@ try:
     plt.tight_layout()
 
     # Save and display the plot
-    plt.savefig("seismogram_acceleration1.png")
-    print("Acceleration seismogram saved as 'seismogram_acceleration1.png'.")
+    plt.savefig("seismogram_" + network + "." + station + "." + channel + "_" + ground_motion_label + ".png")
+    print("Acceleration seismogram saved as 'seismogram_" + network + "." + station + "." + channel + "_" + ground_motion_label + ".png'.")
 
 except Exception as e:
     print("Failed to process the seismogram:", str(e))
-
-
-
 
