@@ -20,10 +20,6 @@ freqmax = 15.
 Manually set the y-axis limits in mm/s^2.  Default (commented out) is to auto-scale.\
 #ylimits = 1.5
 
-Choose/replace the logo.  Top uses PNSNWebpageLogo.jpg, bottom uses PNSNLogo_RGB_Main.png.\
-#img2 = mpimg.imread("PNSNLogo_RGB_Main.png")\
-img2 = mpimg.imread("PNSNWebpageLogo.jpg")
-
 Using ylimits = 1.5 and PNSNWebpageLogo.jpg:\
 ![Using PNSNWebpageLogo.jpg](https://github.com/pnsn/MarinersQuake/blob/main/seismogram_UW.RIZZS.HNN_Acceleration.png)
 
