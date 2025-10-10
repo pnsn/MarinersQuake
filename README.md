@@ -24,11 +24,11 @@ Choose/replace the logo.  Top uses PNSNWebpageLogo.jpg, bottom uses PNSNLogo_RGB
 #img2 = mpimg.imread("PNSNLogo_RGB_Main.png")\
 img2 = mpimg.imread("PNSNWebpageLogo.jpg")
 
+Using ylimits = 1.5:\
+![Using PNSNWebpageLogo.jpg](https://github.com/pnsn/MarinersQuake/blob/main/seismogram_UW.RIZZS.HNE_Acceleration.png)
 
-![Using PNSNWebpageLogo.jpg](https://github.com/pnsn/MarinersQuake/blob/main/seismogram_UW.RIZZS.HNZ_Acceleration.png)
-
-
-![Using PNSNLogo_RGB_Main.png](https://github.com/pnsn/MarinersQuake/blob/main/seismogram_UW.RIZZS.HNN_Acceleration.png)
+ylimits is commented out:\
+![Using PNSNLogo_RGB_Main.png](https://github.com/pnsn/MarinersQuake/blob/main/seismogram_UW.RIZZS.HNZ_Acceleration.png)
 
 
 
