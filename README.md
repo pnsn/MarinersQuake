@@ -17,4 +17,10 @@ Frequency of the wiggles:  10-15 Hz was pretty good for Century Link events, may
 freqmin = 10.\
 freqmax = 15.
 
+![Using PNSNWebpageLogo.jpg](https://github.com/pnsn/MarinersQuake/blob/main/seismogram_UW.RIZZS.HNZ_Acceleration.png)
+
+
+![Using PNSNLogo_RGB_Main.png](https://github.com/pnsn/MarinersQuake/blob/main/seismogram_UW.RIZZS.HNN_Acceleration.png)
+
+
 
