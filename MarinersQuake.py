@@ -19,7 +19,10 @@ def normalize_rgb(r, g, b):
 network = "UW"
 station = "RIZZS"
 location = "--"
-channel = "HNN"
+channel = "HNZ"
+
+# Define the y-axis limits in mm/s^2. Default is None/auto-scale.
+#ylimits = 1.5
 
 # Define start and end times using local times 
 plot_start_time = datetime(2025, 10, 9, 16, 30, 0).astimezone(pytz.utc)
@@ -40,8 +43,10 @@ text_color = normalize_rgb(0,92,92)
 trace_linewidth = 0.2
 
 # Choose and load the PNSN logo
-#img2 = mpimg.imread("PNSNLogo_RGB_Main.png")
-img2 = mpimg.imread("PNSNWebpageLogo.jpg")
+PNSNlogo = "PNSNLogo_RGB_Main.png"
+#PNSNlogo = "PNSNWebpageLogo.jpg"
+img2 = mpimg.imread(PNSNlogo)
+img1 = mpimg.imread("SeisTheMoment.png")
 
 # Define padding (for processing, not for display) 
 padding = 5  # Calculate padding based on the lowest corner of the response removal filter
@@ -104,7 +109,9 @@ try:
     plt.rcParams['font.size'] = 14          # default font size
     plt.rcParams['font.weight'] = 'bold'    # default bold 
     fig = plt.figure(figsize=(13,6))
-    gs = gridspec.GridSpec(2, 2, width_ratios=[10,4], height_ratios=[4,1])
+    gs = gridspec.GridSpec(2, 2, width_ratios=[10,4], height_ratios=[3.2,1])
+    if PNSNlogo == "PNSNLogo_RGB_Main.png":
+        gs = gridspec.GridSpec(2, 2, width_ratios=[10,4], height_ratios=[4,1])
     gs.update(wspace=0.03, hspace=0.03)
 
     # Plot main seismogram
@@ -112,11 +119,11 @@ try:
     ax_plot.plot(fudged_local_times, data, '-', color=trace_color, linewidth=trace_linewidth)
 
     # Set title and labels
-    if channel == 'HNZ':
+    if channel.endswith('Z'):
         ax_plot.set_title(f'Vertical ground motion called by {network}.{station}   ALDS Game 5 {fudged_plot_start_time.strftime("%b %d, %Y")}', color=text_color) #, fontsize=12)
-    elif channel == 'HNN':
+    elif channel.endswith('N'):
         ax_plot.set_title(f'North-South ground motion called by {network}.{station}   ALDS Game 5 {fudged_plot_start_time.strftime("%b %d, %Y")}', color=text_color) #, fontsize=12)
-    elif channel == 'HNE':
+    else:
         ax_plot.set_title(f'East-West ground motion called by {network}.{station}   ALDS Game 5 {fudged_plot_start_time.strftime("%b %d, %Y")}', color=text_color) #, fontsize=12)
 
     ax_plot.set_xlabel('Time (local)', color=text_color, fontweight="bold")
@@ -144,6 +151,21 @@ try:
 
     # --- Adjust margins ---
     plt.subplots_adjust(left=0.14, right=0.99, bottom=0.21, wspace=0.03, hspace=0.03)
+
+    # Settle geometry, then freeze image axes
+    fig.canvas.draw()
+    pos1 = ax_img1.get_position()
+    pos2 = ax_img2.get_position()
+    ax_img1.set_position(pos1)
+    ax_img2.set_position(pos2)
+
+    # --- Adjust they-axis of seismogram if desired
+    try:
+        ax_plot.set_ylim([-1*ylimits,ylimits])
+    except:
+        pass
+
+    fig.canvas.draw_idle()
 
     # Save and display the plot
     plt.savefig("seismogram_" + network + "." + station + "." + channel + "_" + ground_motion_label + ".png")
