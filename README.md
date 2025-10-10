@@ -17,6 +17,9 @@ Frequency of the wiggles:  10-15 Hz was pretty good for Century Link events, may
 freqmin = 10.\
 freqmax = 15.
 
+Manually set the y-axis limits in mm/s^2.  Default (commented out) is to auto-scale.\
+#ylimits = 1.5
+
 Choose/replace the logo.  Top uses PNSNWebpageLogo.jpg, bottom uses PNSNLogo_RGB_Main.png.\
 #img2 = mpimg.imread("PNSNLogo_RGB_Main.png")\
 img2 = mpimg.imread("PNSNWebpageLogo.jpg")
