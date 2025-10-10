@@ -40,7 +40,7 @@ text_color = normalize_rgb(0,92,92)
 trace_linewidth = 0.2
 
 # Define padding (for processing, not for display) 
-padding = 60  # Calculate padding based on the lowest corner of the response removal filter
+padding = 5  # Calculate padding based on the lowest corner of the response removal filter
 
 # Define the ground motion type, options are: DISP, VEL, ACC, DEF
 ground_motion_type = "ACC"
