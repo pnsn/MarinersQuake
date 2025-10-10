@@ -11,10 +11,10 @@ channel- Choose HNZ, HNN, or HNE for vertical, north-south, east-west ground mot
 
 UTC time (will get converted to local time):\
 plot_start_time = datetime(2025, 10, 9, 16, 30, 0).astimezone(pytz.utc)\
-plot_end_time = datetime(2025, 10, 9, 16, 35, 0).astimezone(pytz.utc)\
+plot_end_time = datetime(2025, 10, 9, 16, 35, 0).astimezone(pytz.utc)
 
 Frequency of the wiggles:  10-15 Hz was pretty good for Century Link events, maybe try 5-10, 5-15, 10-20.\
 freqmin = 10.\
-freqmax = 15.\
+freqmax = 15.
 
 
