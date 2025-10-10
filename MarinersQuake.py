@@ -26,7 +26,7 @@ plot_start_time = datetime(2025, 10, 9, 16, 30, 0).astimezone(pytz.utc)
 plot_end_time = datetime(2025, 10, 9, 16, 35, 0).astimezone(pytz.utc)
 
 # Define frequency bands for the response removal
-pre_filt = (0.03, 0.05, 30.0, 35.0)
+pre_filt = (0.2, 0.3, 30.0, 35.0)
 
 # Set filter parameters for plotted seismogram. 
 #   Make sure these are in between the 2nd and 3rd in pre_filt.
@@ -38,6 +38,10 @@ freqmax = 15.
 trace_color = normalize_rgb(12,44,86)
 text_color = normalize_rgb(0,92,92)
 trace_linewidth = 0.2
+
+# Choose and load the PNSN logo
+#img2 = mpimg.imread("PNSNLogo_RGB_Main.png")
+img2 = mpimg.imread("PNSNWebpageLogo.jpg")
 
 # Define padding (for processing, not for display) 
 padding = 5  # Calculate padding based on the lowest corner of the response removal filter
@@ -69,11 +73,6 @@ with open("station.xml", "wb") as f:
 # Read waveform and station metadata
 st = read("waveform.mseed")
 inv = read_inventory("station.xml")
-
-# Load jpegs
-img1 = mpimg.imread("SeisTheMoment.png")
-img2 = mpimg.imread("PNSNLogo_RGB_Main.png")
-#img2 = mpimg.imread("PNSNWebpageLogo.jpg")
 
 try:
     # Trim the stream to the desired trimming window
