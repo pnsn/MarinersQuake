@@ -103,7 +103,6 @@ try:
     # Create a figure for plotting
     plt.rcParams['font.size'] = 14          # default font size
     plt.rcParams['font.weight'] = 'bold'    # default bold 
-    #fig, ax = plt.subplots(figsize=(13, 6))
     fig = plt.figure(figsize=(13,6))
     gs = gridspec.GridSpec(2, 2, width_ratios=[10,4], height_ratios=[4,1])
     gs.update(wspace=0.03, hspace=0.03)
@@ -133,7 +132,6 @@ try:
     # Set the date format on the x-axis
     ax_plot.xaxis.set_major_formatter(DateFormatter('%H:%M:%S'))
     plt.xticks(rotation=45)
-    #plt.tight_layout()
 
     # --- Images on right side ---
     ax_img1 = plt.subplot(gs[0, 1])
@@ -146,7 +144,6 @@ try:
 
     # --- Adjust margins ---
     plt.subplots_adjust(left=0.14, right=0.99, bottom=0.21, wspace=0.03, hspace=0.03)
-    #plt.subplots_adjust(wspace=0.05, hspace=0.05, bottom=0.22)
 
     # Save and display the plot
     plt.savefig("seismogram_" + network + "." + station + "." + channel + "_" + ground_motion_label + ".png")
