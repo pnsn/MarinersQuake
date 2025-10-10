@@ -25,8 +25,12 @@ channel = "HNZ"
 #ylimits = 1.5
 
 # Define start and end times using local times 
-plot_start_time = datetime(2025, 10, 9, 16, 30, 0).astimezone(pytz.utc)
-plot_end_time = datetime(2025, 10, 9, 16, 35, 0).astimezone(pytz.utc)
+pacific = pytz.timezone('America/Los_Angeles')
+utc = pytz.utc
+plot_start_time_local = pacific.localize(datetime(2025, 10, 10, 10, 0, 0))
+plot_end_time_local = pacific.localize(datetime(2025, 10, 10, 10, 10, 0))
+plot_start_time = plot_start_time_local.astimezone(utc)
+plot_end_time = plot_end_time_local.astimezone(utc)
 
 # Define frequency bands for the response removal
 pre_filt = (0.2, 0.3, 30.0, 35.0)
@@ -44,7 +48,6 @@ trace_linewidth = 0.2
 
 # Choose and load the PNSN logo
 PNSNlogo = "PNSNLogo_RGB_Main.png"
-#PNSNlogo = "PNSNWebpageLogo.jpg"
 img2 = mpimg.imread(PNSNlogo)
 img1 = mpimg.imread("SeisTheMoment.png")
 
@@ -95,11 +98,8 @@ try:
     data = tr.data * 1000.
     times = [datetime.utcfromtimestamp(plot_start_time.timestamp() + t) for t in tr.times()]
 
-    # Define the Pacific Time Zone
-    pacific_tz = pytz.timezone('America/Los_Angeles')
-    
     # Calculate dynamic time offset based on date and daylight saving
-    offset = pacific_tz.utcoffset(times[0]).total_seconds() / 3600
+    offset = pacific.utcoffset(times[0]).total_seconds() / 3600
 
     # Adjust times to Pacific Time dynamically considering daylight savings
     fudged_local_times = [t + timedelta(hours=offset) for t in times]
@@ -109,9 +109,7 @@ try:
     plt.rcParams['font.size'] = 14          # default font size
     plt.rcParams['font.weight'] = 'bold'    # default bold 
     fig = plt.figure(figsize=(13,6))
-    gs = gridspec.GridSpec(2, 2, width_ratios=[10,4], height_ratios=[3.2,1])
-    if PNSNlogo == "PNSNLogo_RGB_Main.png":
-        gs = gridspec.GridSpec(2, 2, width_ratios=[10,4], height_ratios=[4,1])
+    gs = gridspec.GridSpec(2, 2, width_ratios=[10,4], height_ratios=[4,1])
     gs.update(wspace=0.03, hspace=0.03)
 
     # Plot main seismogram

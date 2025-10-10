@@ -9,9 +9,9 @@ pip install pytz obspy requests
 The parameters in the code to play with to get the prettiest wiggles:\
 channel- Choose HNZ, HNN, or HNE for vertical, north-south, east-west ground motion.
 
-UTC time (will get converted to local time):\
-plot_start_time = datetime(2025, 10, 9, 16, 30, 0).astimezone(pytz.utc)\
-plot_end_time = datetime(2025, 10, 9, 16, 35, 0).astimezone(pytz.utc)
+Time window (Pacific time) of wiggles:\
+plot_start_time_local = pacific.localize(datetime(2025, 10, 10, 10, 0, 0))
+plot_end_time_local = pacific.localize(datetime(2025, 10, 10, 10, 10, 0))
 
 Frequency of the wiggles:  10-15 Hz was pretty good for Century Link events, maybe try 5-10, 5-15, 10-20.\
 freqmin = 10.\
@@ -25,9 +25,9 @@ Choose/replace the logo.  Top uses PNSNWebpageLogo.jpg, bottom uses PNSNLogo_RGB
 img2 = mpimg.imread("PNSNWebpageLogo.jpg")
 
 Using ylimits = 1.5 and PNSNWebpageLogo.jpg:\
-![Using PNSNWebpageLogo.jpg](https://github.com/pnsn/MarinersQuake/blob/main/seismogram_UW.RIZZS.HNE_Acceleration.png)
+![Using PNSNWebpageLogo.jpg](https://github.com/pnsn/MarinersQuake/blob/main/seismogram_UW.RIZZS.HNN_Acceleration.png)
 
-ylimits is commented out and using PNSNLogo_RGB_Main.png:\
+ylimits is commented out (amplitudes auto-scaled to fit figure):\
 ![Using PNSNLogo_RGB_Main.png](https://github.com/pnsn/MarinersQuake/blob/main/seismogram_UW.RIZZS.HNZ_Acceleration.png)
 
 
