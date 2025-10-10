@@ -18,6 +18,9 @@ freqmin = 10.\
 freqmax = 15.
 
 Choose/replace the logo.  Top uses PNSNWebpageLogo.jpg, bottom uses PNSNLogo_RGB_Main.png.
+#img2 = mpimg.imread("PNSNLogo_RGB_Main.png")
+img2 = mpimg.imread("PNSNWebpageLogo.jpg")
+
 
 ![Using PNSNWebpageLogo.jpg](https://github.com/pnsn/MarinersQuake/blob/main/seismogram_UW.RIZZS.HNZ_Acceleration.png)
 
