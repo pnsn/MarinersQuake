@@ -10,7 +10,7 @@ The parameters in the code to play with to get the prettiest wiggles:\
 channel- Choose HNZ, HNN, or HNE for vertical, north-south, east-west ground motion.
 
 Time window (Pacific time) of wiggles:\
-plot_start_time_local = pacific.localize(datetime(2025, 10, 10, 10, 0, 0))
+plot_start_time_local = pacific.localize(datetime(2025, 10, 10, 10, 0, 0))\
 plot_end_time_local = pacific.localize(datetime(2025, 10, 10, 10, 10, 0))
 
 Frequency of the wiggles:  10-15 Hz was pretty good for Century Link events, maybe try 5-10, 5-15, 10-20.\
