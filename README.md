@@ -20,7 +20,7 @@ freqmax = 15.
 Manually set the y-axis limits in mm/s^2.  Default (commented out) is to auto-scale.\
 #ylimits = 1.5
 
-Using ylimits = 1.5 and PNSNWebpageLogo.jpg:\
+Using ylimits = 1.5:\
 ![Using PNSNWebpageLogo.jpg](https://github.com/pnsn/MarinersQuake/blob/main/seismogram_UW.RIZZS.HNN_Acceleration.png)
 
 ylimits is commented out (amplitudes auto-scaled to fit figure):\
