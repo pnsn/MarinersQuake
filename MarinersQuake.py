@@ -10,6 +10,7 @@ from matplotlib.dates import DateFormatter
 import requests
 import matplotlib.image as mpimg
 from matplotlib import gridspec
+import textwrap
 
 def normalize_rgb(r, g, b):
     """Normalize RGB colors for Matplotlib."""
@@ -27,8 +28,8 @@ channel = "HNZ"
 # Define start and end times using local times 
 pacific = pytz.timezone('America/Los_Angeles')
 utc = pytz.utc
-plot_start_time_local = pacific.localize(datetime(2025, 10, 10, 10, 0, 0))
-plot_end_time_local = pacific.localize(datetime(2025, 10, 10, 10, 10, 0))
+plot_start_time_local = pacific.localize(datetime(2025, 10, 10, 22, 4, 0))
+plot_end_time_local = pacific.localize(datetime(2025, 10, 10, 22, 11, 0))
 plot_start_time = plot_start_time_local.astimezone(utc)
 plot_end_time = plot_end_time_local.astimezone(utc)
 
@@ -59,8 +60,9 @@ ground_motion_type = "ACC"
 ground_motion_label = {}
 if ground_motion_type == "ACC":
     ground_motion_label = "Acceleration"
-    ground_motion_units = "(m/s^2)"
-    ground_motion_units = "(mm/s^2)"
+    #ground_motion_units = "(m/s^2)"
+    #ground_motion_units = "(mm/s^2)"
+    ground_motion_units = "% g"
 elif ground_motion_type == "VEL":
     ground_motion_label = "Velocity"
     ground_motion_units = "(m/s)"
@@ -95,7 +97,7 @@ try:
 
     # Extract data for plotting
     tr = st[0]
-    data = tr.data * 1000.
+    data = tr.data * 10.
     times = [datetime.utcfromtimestamp(plot_start_time.timestamp() + t) for t in tr.times()]
 
     # Calculate dynamic time offset based on date and daylight saving
@@ -118,7 +120,12 @@ try:
 
     # Set title and labels
     if channel.endswith('Z'):
-        ax_plot.set_title(f'Vertical ground motion called by {network}.{station}   ALDS Game 5 {fudged_plot_start_time.strftime("%b %d, %Y")}', color=text_color) #, fontsize=12)
+#        ax_plot.set_title(f'Vertical ground motion called by {network}.{station}   ALDS Game 5 {fudged_plot_start_time.strftime("%b %d, %Y")}            Polanco Game Winning Single, Crawford Scores, MARINERS WIN!!', color=text_color, wrap=True) #, fontsize=12)
+
+         title = (f'Vertical ground motion called by {network}.{station}   ALDS Game 5 {fudged_plot_start_time.strftime("%b %d, %Y")} Polanco Game Winning Single, Crawford Scores, MARINERS WIN!!')
+         wrapped_title = "\n".join(textwrap.wrap(title, width=70))
+         ax_plot.set_title(wrapped_title, color=text_color)
+
     elif channel.endswith('N'):
         ax_plot.set_title(f'North-South ground motion called by {network}.{station}   ALDS Game 5 {fudged_plot_start_time.strftime("%b %d, %Y")}', color=text_color) #, fontsize=12)
     else:
