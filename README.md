@@ -10,9 +10,9 @@ The parameters in the code to play with to get the prettiest wiggles:\
 channel- Choose HNZ, HNN, or HNE for vertical, north-south, east-west ground motion.
 
 Time window (Pacific time) of wiggles for the entire plot and then the portion to be animated in 1:1 time:\
-plot_start_time_local = pacific.localize(datetime(2025, 10, 10, 22, 7, 5))
-plot_end_time_local = pacific.localize(datetime(2025, 10, 10, 22, 7, 30))
-video_start_local = pacific.localize(datetime(2025, 10, 10, 22, 7, 12))
+plot_start_time_local = pacific.localize(datetime(2025, 10, 10, 22, 7, 5)) \
+plot_end_time_local = pacific.localize(datetime(2025, 10, 10, 22, 7, 30)) \
+video_start_local = pacific.localize(datetime(2025, 10, 10, 22, 7, 12)) \
 video_end_local   = pacific.localize(datetime(2025, 10, 10, 22, 7, 30))
 
 
@@ -26,13 +26,13 @@ Manually set the y-axis limits in mm/s^2.  Default (commented out) is to auto-sc
 Frames per second: animation fps.  Set = 0 to skip the animation and just make an image. \
    20 is a reasonable fps if your plotting less than a minute of data.
 
-Using ylimits = 1.5:\
-![Using PNSNWebpageLogo.jpg](https://github.com/pnsn/MarinersQuake/blob/main/seismogram_UW.RIZZS.HNN_Acceleration.png)
+Using ylimits = 0.1 %g:\
+![seismogram_UW.RIZZS.HNZ_Acceleration_yscaled.png](https://github.com/pnsn/MarinersQuake/blob/main/seismogram_UW.RIZZS.HNN_Acceleration_yscaled.png)
 
 ylimits is commented out (amplitudes auto-scaled to fit figure):\
-![Using PNSNLogo_RGB_Main.png](https://github.com/pnsn/MarinersQuake/blob/main/seismogram_UW.RIZZS.HNZ_Acceleration.png)
+![seismogram_UW.RIZZS.HNZ_Acceleration.png](https://github.com/pnsn/MarinersQuake/blob/main/seismogram_UW.RIZZS.HNZ_Acceleration.png)
 
 Resulting animation, video here starts at 12sec and goes till 30sec:
-![UW.RIZZS_animation.mp4](https://github.com/pnsn/MarinersQuake/blob/main/UW.RIZZS_animation.mp4)
+[![UW.RIZZS_animation.mp4](https://github.com/pnsn/MarinersQuake/blob/main/seismogram_UW.RIZZS.HNZ_Acceleration.pn)](https://github.com/pnsn/MarinersQuake/blob/main/UW.RIZZS_animation.mp4)
 
 
