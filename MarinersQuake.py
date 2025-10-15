@@ -11,6 +11,9 @@ import requests
 import matplotlib.image as mpimg
 from matplotlib import gridspec
 import textwrap
+import matplotlib.animation as animation
+import numpy as np
+import time
 
 def normalize_rgb(r, g, b):
     """Normalize RGB colors for Matplotlib."""
@@ -25,11 +28,24 @@ channel = "HNZ"
 # Define the y-axis limits in mm/s^2. Default is None/auto-scale.
 #ylimits = 1.5
 
+# Define figure title
+title_line1 = "  Vertical ground motion called by UW.RIZZS   ALCS Game 3 Oct 15, 2025"
+title_line2 = "  Something amazing.... MARINERS WIN!!"
+make_gif = False   # also create a GIF version
+show_time_marker = False  # include a red line sliding in time in the animation
+
+# Define frames per second.  fps = 0 to just make .png and no .mp4 (faster)
+fps = 20  # (20 is smooth if only showing ~20 sec)
+
 # Define start and end times using local times 
 pacific = pytz.timezone('America/Los_Angeles')
 utc = pytz.utc
-plot_start_time_local = pacific.localize(datetime(2025, 10, 10, 22, 4, 0))
-plot_end_time_local = pacific.localize(datetime(2025, 10, 10, 22, 11, 0))
+plot_start_time_local = pacific.localize(datetime(2025, 10, 10, 22, 7, 5))
+plot_end_time_local = pacific.localize(datetime(2025, 10, 10, 22, 7, 30))
+video_start_local = pacific.localize(datetime(2025, 10, 10, 22, 7, 12))
+video_end_local   = pacific.localize(datetime(2025, 10, 10, 22, 7, 30))
+
+animation_filename = "UW.RIZZS_animation.mp4"
 plot_start_time = plot_start_time_local.astimezone(utc)
 plot_end_time = plot_end_time_local.astimezone(utc)
 
@@ -45,12 +61,12 @@ freqmax = 15.
 # Define colors and linewidth.  Just look up RGB values for team colors
 trace_color = normalize_rgb(12,44,86)
 text_color = normalize_rgb(0,92,92)
-trace_linewidth = 0.2
+trace_linewidth = 0.4
 
 # Choose and load the PNSN logo
 PNSNlogo = "PNSNLogo_RGB_Main.png"
 img2 = mpimg.imread(PNSNlogo)
-img1 = mpimg.imread("SeisTheMoment.png")
+img1 = mpimg.imread("Seattle_Mariners_Logo.png")
 
 # Define padding (for processing, not for display) 
 padding = 5  # Calculate padding based on the lowest corner of the response removal filter
@@ -97,7 +113,7 @@ try:
 
     # Extract data for plotting
     tr = st[0]
-    data = tr.data * 10.
+    data = tr.data * 100 / 9.8 # go from m/s^2 to %g
     times = [datetime.utcfromtimestamp(plot_start_time.timestamp() + t) for t in tr.times()]
 
     # Calculate dynamic time offset based on date and daylight saving
@@ -108,63 +124,57 @@ try:
     fudged_plot_start_time = plot_start_time + timedelta(hours=offset)
 
     # Create a figure for plotting
-    plt.rcParams['font.size'] = 14          # default font size
-    plt.rcParams['font.weight'] = 'bold'    # default bold 
-    fig = plt.figure(figsize=(13,6))
-    gs = gridspec.GridSpec(2, 2, width_ratios=[10,4], height_ratios=[4,1])
-    gs.update(wspace=0.03, hspace=0.03)
+    # ==========================================================
+    # FIGURE AND TITLE / LOGO LAYOUT
+    # ==========================================================
 
-    # Plot main seismogram
-    ax_plot = plt.subplot(gs[:,0])
-    ax_plot.plot(fudged_local_times, data, '-', color=trace_color, linewidth=trace_linewidth)
+    plt.rcParams['font.size'] = 14
+    plt.rcParams['font.weight'] = 'bold'
+    fig = plt.figure(figsize=(13, 6))
 
-    # Set title and labels
-    if channel.endswith('Z'):
-#        ax_plot.set_title(f'Vertical ground motion called by {network}.{station}   ALDS Game 5 {fudged_plot_start_time.strftime("%b %d, %Y")}            Polanco Game Winning Single, Crawford Scores, MARINERS WIN!!', color=text_color, wrap=True) #, fontsize=12)
+    # Define grid for the main plot only (no more right-side images)
+    gs = gridspec.GridSpec(1, 1)
+    ax_plot = plt.subplot(gs[0, 0])
 
-         title = (f'Vertical ground motion called by {network}.{station}   ALDS Game 5 {fudged_plot_start_time.strftime("%b %d, %Y")} Polanco Game Winning Single, Crawford Scores, MARINERS WIN!!')
-         wrapped_title = "\n".join(textwrap.wrap(title, width=70))
-         ax_plot.set_title(wrapped_title, color=text_color)
+    # --- Build multi-line title ---
+    title_lines = [title_line1]
+    if 'title_line2' in locals() and title_line2.strip():
+        title_lines.append(title_line2)
+    if 'title_line3' in locals() and title_line3.strip():
+        title_lines.append(title_line3)
 
-    elif channel.endswith('N'):
-        ax_plot.set_title(f'North-South ground motion called by {network}.{station}   ALDS Game 5 {fudged_plot_start_time.strftime("%b %d, %Y")}', color=text_color) #, fontsize=12)
-    else:
-        ax_plot.set_title(f'East-West ground motion called by {network}.{station}   ALDS Game 5 {fudged_plot_start_time.strftime("%b %d, %Y")}', color=text_color) #, fontsize=12)
+    # Join and wrap lines if they’re long
+    wrapped_title = "\n".join([
+        "\n".join(textwrap.wrap(line, width=80)) for line in title_lines
+    ])
 
+    ax_plot.set_title(wrapped_title, color=text_color, loc='left', fontsize = 16)
+
+    # --- Axis labels and style ---
     ax_plot.set_xlabel('Time (local)', color=text_color, fontweight="bold")
-    ax_plot.set_ylabel(ground_motion_label + " " + ground_motion_units, color=text_color, fontsize = 12, fontweight="bold")
-
-    # Change axis and tick colors
+    ax_plot.set_ylabel(f"{ground_motion_label} {ground_motion_units}",
+                       color=text_color, fontsize=12, fontweight="bold")
     ax_plot.tick_params(axis='both', which='both', colors=text_color)
-    
-    # Set the spine color to the same as text_color
     for spine in ax_plot.spines.values():
         spine.set_color(text_color)
 
-    # Set the date format on the x-axis
     ax_plot.xaxis.set_major_formatter(DateFormatter('%H:%M:%S'))
     plt.xticks(rotation=45)
 
-    # --- Images on right side ---
-    ax_img1 = plt.subplot(gs[0, 1])
-    ax_img1.imshow(img1)
-    ax_img1.axis("off")
+    # --- Insert the PNSN logo in top-left corner above title ---
+    # Use fig.add_axes to position it in figure coordinates (0–1)
+    logopnsn_ax = fig.add_axes([0.77, 0.82, 0.18, 0.18])  # [left, bottom, width, height]
+    logopnsn_ax.imshow(img2)
+    logopnsn_ax.axis("off")
 
-    ax_img2 = plt.subplot(gs[1, 1])
-    ax_img2.imshow(img2)
-    ax_img2.axis("off")
+    logoS_ax = fig.add_axes([0.035, 0.87, 0.1, 0.1])
+    logoS_ax.imshow(img1)
+    logoS_ax.axis("off")
 
     # --- Adjust margins ---
-    plt.subplots_adjust(left=0.14, right=0.99, bottom=0.21, wspace=0.03, hspace=0.03)
+    plt.subplots_adjust(left=0.12, right=0.94, bottom=0.22, top=0.83)
 
-    # Settle geometry, then freeze image axes
-    fig.canvas.draw()
-    pos1 = ax_img1.get_position()
-    pos2 = ax_img2.get_position()
-    ax_img1.set_position(pos1)
-    ax_img2.set_position(pos2)
-
-    # --- Adjust they-axis of seismogram if desired
+    # --- Adjust the y-axis of seismogram if desired
     try:
         ax_plot.set_ylim([-1*ylimits,ylimits])
     except:
@@ -172,10 +182,116 @@ try:
 
     fig.canvas.draw_idle()
 
-    # Save and display the plot
-    plt.savefig("seismogram_" + network + "." + station + "." + channel + "_" + ground_motion_label + ".png")
-    print("Acceleration seismogram saved as 'seismogram_" + network + "." + station + "." + channel + "_" + ground_motion_label + ".png'.")
-
 except Exception as e:
     print("Failed to process the seismogram:", str(e))
+
+# ==========================================================
+# ANIMATION SECTION (progressively reveal seismogram)
+# ==========================================================
+try:
+    if fps > 0:
+        print("Creating animation...")
+
+        # --- Normalize time objects (make all tz-naive) ---
+        xdata = np.array([t.replace(tzinfo=None) for t in fudged_local_times])
+        ydata = np.array(data)
+        video_start_naive = video_start_local.replace(tzinfo=None)
+        video_end_naive   = video_end_local.replace(tzinfo=None)
+        plot_start_naive  = plot_start_time_local.replace(tzinfo=None)
+        plot_end_naive    = plot_end_time_local.replace(tzinfo=None)
+
+        # --- Set axis limits for entire plot window ---
+        ax_plot.set_xlim(plot_start_naive, plot_end_naive)
+        ypad = 0.05 * (ydata.max() - ydata.min())
+        ax_plot.set_ylim(ydata.min() - ypad, ydata.max() + ypad)
+
+        # --- Split data by window segments ---
+        mask_pre  = xdata <= video_start_naive
+        mask_anim = (xdata > video_start_naive) & (xdata <= video_end_naive)
+        mask_post = xdata > video_end_naive
+        x_pre,  y_pre  = xdata[mask_pre],  ydata[mask_pre]
+        x_anim, y_anim = xdata[mask_anim], ydata[mask_anim]
+        x_post, y_post = xdata[mask_post], ydata[mask_post]
+        print(f"Pre: {len(x_pre)}, Anim: {len(x_anim)}, Post: {len(x_post)}")
+
+        # --- Safety fallbacks ---
+        if len(x_pre) == 0:
+            x_pre, y_pre = [xdata[0]], [ydata[0]]
+        if len(x_anim) == 0:
+            x_anim, y_anim = [xdata[-1]], [ydata[-1]]
+
+        # --- Timing and frame setup ---
+        duration = (video_end_naive - video_start_naive).total_seconds()
+        frames = max(2, int(duration * fps))
+        frame_interval = 1000 / fps
+        samples_per_frame = max(1, int(len(x_anim) / frames))
+        frame_indices = np.arange(1, len(x_anim) + 1, samples_per_frame)
+        frame_indices = frame_indices[:frames]
+
+        # --- Add one extra frame for the final "full" seismogram ---
+        frame_indices = np.append(frame_indices, len(x_anim))
+        print(f"Total frames: {len(frame_indices)}")
+
+        # --- Base + animated lines ---
+        line_anim, = ax_plot.plot(x_pre, y_pre, '-', color=trace_color, linewidth=trace_linewidth)
+        time_marker = None
+        if show_time_marker:
+            time_marker = ax_plot.axvline(video_start_naive, color='r', lw=1.5)
+
+        # --- Update function ---
+        def update(frame_idx):
+            idx = frame_indices[frame_idx]
+            x_show = np.concatenate((x_pre, x_anim[:idx]))
+            y_show = np.concatenate((y_pre, y_anim[:idx]))
+            line_anim.set_data(x_show, y_show)
+
+            # On final frame, include post data (fill to plot_end_time_local)
+            if frame_idx == len(frame_indices) - 1 and len(x_post) > 0:
+                line_anim.set_data(np.concatenate((x_show, x_post)),
+                                   np.concatenate((y_show, y_post)))
+
+            # Update the red marker if enabled
+            if show_time_marker and time_marker is not None:
+                if frame_idx < len(frame_indices) - 1:
+                    time_marker.set_xdata(x_anim[min(idx - 1, len(x_anim) - 1)])
+                else:
+                    # hide it on the final frame
+                    time_marker.set_visible(False)
+
+            return (line_anim,) if not show_time_marker else (line_anim, time_marker)
+
+        # --- Animate ---
+        anim = animation.FuncAnimation(
+            fig, update, frames=len(frame_indices),
+            interval=frame_interval, blit=True, repeat=False
+        )
+
+        # --- Save animation files ---
+        anim.save(animation_filename, writer='ffmpeg', fps=fps)
+        print(f"Animation saved as {animation_filename}")
+
+        if make_gif:
+            gif_name = animation_filename.replace(".mp4", ".gif")
+            anim.save(gif_name, writer='pillow', fps=fps)
+            print(f"GIF saved as {gif_name}")
+
+        # --- Ensure last frame drawn fully for static PNG ---
+        plt.draw()
+        plt.savefig(f"seismogram_{network}.{station}.{channel}_{ground_motion_label}.png",
+                    dpi=150, bbox_inches='tight')
+        print(f"Static seismogram saved as seismogram_{network}.{station}.{channel}_{ground_motion_label}.png")
+
+    else:
+        ax_plot.plot(fudged_local_times, data, '-', color=trace_color, linewidth=trace_linewidth)
+        try:
+            ax_plot.set_ylim([-1 * ylimits, ylimits])
+        except:
+            pass
+        fig.canvas.draw_idle()
+        plt.savefig(f"seismogram_{network}.{station}.{channel}_{ground_motion_label}.png",
+                    dpi=150, bbox_inches='tight')
+        print(f"Static seismogram saved as seismogram_{network}.{station}.{channel}_{ground_motion_label}.png")
+ 
+except Exception as e:
+    print("Animation failed:", str(e))
 
