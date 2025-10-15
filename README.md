@@ -27,12 +27,12 @@ Frames per second: animation fps.  Set = 0 to skip the animation and just make a
    20 is a reasonable fps if your plotting less than a minute of data.
 
 Using ylimits = 0.1 %g:\
-![seismogram_UW.RIZZS.HNZ_Acceleration_yscaled.png](https://github.com/pnsn/MarinersQuake/blob/main/seismogram_UW.RIZZS.HNN_Acceleration_yscaled.png)
+![seismogram_UW.RIZZS.HNZ_Acceleration_yscaled.png](https://github.com/pnsn/MarinersQuake/blob/main/seismogram_UW.RIZZS.HNZ_Acceleration_yscaled.png)
 
 ylimits is commented out (amplitudes auto-scaled to fit figure):\
 ![seismogram_UW.RIZZS.HNZ_Acceleration.png](https://github.com/pnsn/MarinersQuake/blob/main/seismogram_UW.RIZZS.HNZ_Acceleration.png)
 
 Resulting animation, video here starts at 12sec and goes till 30sec:
-[![UW.RIZZS_animation.mp4](https://github.com/pnsn/MarinersQuake/blob/main/seismogram_UW.RIZZS.HNZ_Acceleration.pn)](https://github.com/pnsn/MarinersQuake/blob/main/UW.RIZZS_animation.mp4)
+[![UW.RIZZS_animation.mp4](https://github.com/pnsn/MarinersQuake/blob/main/seismogram_UW.RIZZS.HNZ_Acceleration.png)](https://github.com/pnsn/MarinersQuake/blob/main/UW.RIZZS_animation.mp4)
 
 
