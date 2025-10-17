@@ -28,21 +28,21 @@ channel = "HNZ"
 # use variables for time window
 year = 2025
 month = 10
-day_start = 10
-day_end = 10
-hr_start = 22
-min_start = 2
+day_start = 15
+day_end = 15
+hr_start = 19
+min_start = 39
 sec_start = 0
-hr_end = 22
-min_end = 8
+hr_end = 19
+min_end = 41
 sec_end = 0
 
 # Define the y-axis limits in mm/s^2. Default is None/auto-scale.
 #ylimits = 1.5
 
 # Define figure title
-title_line1 = "  Starting vertical ground motion called by UW.RIZZS   ALCS Game 3 Oct 15, 2025"
-title_line2 = "  This is what inbetween innings looks like (loud music thumping)"
+title_line1 = "  Up and down shaking called by UW.RIZZS, ALCS Game 3 Oct 15, 2025"
+title_line2 = "  Late rally by Arozarena and Raleigh gives the crowd a bit of energy."
 make_gif = False   # also create a GIF version
 show_time_marker = False  # include a red line sliding in time in the animation
 
@@ -54,7 +54,7 @@ pacific = pytz.timezone('America/Los_Angeles')
 utc = pytz.utc
 video_start_local = pacific.localize(datetime(year, month, day_start, hr_start, min_start, sec_start))
 video_end_local   = pacific.localize(datetime(year, month, day_end, hr_end, min_end, sec_end))
-animation_filename = "UW.RIZZS_animation.mp4"
+animation_filename = "UW.RIZZS_animation_RaleighHomer2.mp4"
 plot_start_time_local = pacific.localize(datetime(year, month, day_start, hr_start, min_start, sec_start))
 plot_end_time_local = pacific.localize(datetime(year, month, day_end, hr_end, min_end, sec_end))
 
