@@ -25,12 +25,24 @@ station = "RIZZS"
 location = "--"
 channel = "HNZ"
 
+# use variables for time window
+year = 2025
+month = 10
+day_start = 15
+day_end = 15
+hr_start = 19
+min_start = 39
+sec_start = 0
+hr_end = 19
+min_end = 41
+sec_end = 0
+
 # Define the y-axis limits in mm/s^2. Default is None/auto-scale.
 #ylimits = 1.5
 
 # Define figure title
-title_line1 = "  Vertical ground motion called by UW.RIZZS   ALCS Game 3 Oct 15, 2025"
-title_line2 = "  Something amazing.... MARINERS WIN!!"
+title_line1 = "  Up and down shaking called by UW.RIZZS, ALCS Game 3 Oct 15, 2025"
+title_line2 = "  Late rally by Arozarena and Raleigh gives the crowd a bit of energy."
 make_gif = False   # also create a GIF version
 show_time_marker = False  # include a red line sliding in time in the animation
 
@@ -40,14 +52,16 @@ fps = 20  # (20 is smooth if only showing ~20 sec)
 # Define start and end times using local times 
 pacific = pytz.timezone('America/Los_Angeles')
 utc = pytz.utc
-plot_start_time_local = pacific.localize(datetime(2025, 10, 10, 22, 7, 5))
-plot_end_time_local = pacific.localize(datetime(2025, 10, 10, 22, 7, 30))
-video_start_local = pacific.localize(datetime(2025, 10, 10, 22, 7, 12))
-video_end_local   = pacific.localize(datetime(2025, 10, 10, 22, 7, 30))
+video_start_local = pacific.localize(datetime(year, month, day_start, hr_start, min_start, sec_start))
+video_end_local   = pacific.localize(datetime(year, month, day_end, hr_end, min_end, sec_end))
+animation_filename = "UW.RIZZS_animation_RaleighHomer2.mp4"
+plot_start_time_local = pacific.localize(datetime(year, month, day_start, hr_start, min_start, sec_start))
+plot_end_time_local = pacific.localize(datetime(year, month, day_end, hr_end, min_end, sec_end))
 
-animation_filename = "UW.RIZZS_animation.mp4"
 plot_start_time = plot_start_time_local.astimezone(utc)
 plot_end_time = plot_end_time_local.astimezone(utc)
+video_start = video_start_local.astimezone(utc)
+video_end   = video_end_local.astimezone(utc)
 
 # Define frequency bands for the response removal
 pre_filt = (0.2, 0.3, 30.0, 35.0)
@@ -76,9 +90,9 @@ ground_motion_type = "ACC"
 ground_motion_label = {}
 if ground_motion_type == "ACC":
     ground_motion_label = "Acceleration"
-    #ground_motion_units = "(m/s^2)"
-    #ground_motion_units = "(mm/s^2)"
-    ground_motion_units = "% g"
+#    ground_motion_units = "(m/s^2)"
+#    ground_motion_units = "(mm/s^2)"
+    ground_motion_units = "%g"
 elif ground_motion_type == "VEL":
     ground_motion_label = "Velocity"
     ground_motion_units = "(m/s)"
@@ -88,7 +102,7 @@ elif ground_motion_type == "DISP":
 
 # Download data
 julian_day = UTCDateTime(plot_start_time).julday
-mseed_url = "https://seismo.ess.washington.edu/~ahutko/UW.RIZZS/UW.RIZZS.." + channel + ".2025." + str(julian_day)
+mseed_url = f"https://seismo.ess.washington.edu/~ahutko/UW.RIZZS/UW.RIZZS..{channel}.{year}.{julian_day}"
 xml_url = "https://seismo.ess.washington.edu/~ahutko/UW.RIZZS/Station_UW_RIZZS.xml"
 
 with open("waveform.mseed", "wb") as f:
@@ -113,7 +127,9 @@ try:
 
     # Extract data for plotting
     tr = st[0]
-    data = tr.data * 100 / 9.8 # go from m/s^2 to %g
+    #data = tr.data * 1000. # mm/s/s
+    data = ( tr.data / 9.8 ) * 100 # percent g
+    #data = tr.data
     times = [datetime.utcfromtimestamp(plot_start_time.timestamp() + t) for t in tr.times()]
 
     # Calculate dynamic time offset based on date and daylight saving
@@ -155,6 +171,11 @@ try:
     ax_plot.set_ylabel(f"{ground_motion_label} {ground_motion_units}",
                        color=text_color, fontsize=12, fontweight="bold")
     ax_plot.tick_params(axis='both', which='both', colors=text_color)
+
+    #sec_ax = ax_plot.secondary_yaxis("right",functions=(lambda x: (100.*x)/9.8, lambda x: 9.8*x/100.))
+    #sec_ax.set_ylabel("%g")
+    
+    # Set the spine color to the same as text_color
     for spine in ax_plot.spines.values():
         spine.set_color(text_color)
 
@@ -177,6 +198,8 @@ try:
     # --- Adjust the y-axis of seismogram if desired
     try:
         ax_plot.set_ylim([-1*ylimits,ylimits])
+        sec_ax = ax_plot.secondary_yaxis("right",functions=(lambda x: (100.*x)/9.8, lambda x: 9.8*x/100.))
+        sec_ax.set_ylabel("%g")
     except:
         pass
 
